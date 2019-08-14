@@ -5,7 +5,7 @@ import os
 import json
 
 locations = []
-roe_trimestral = []
+roe_trimestral = pd.DataFrame();
 
 def main(argv):
     global locations 
@@ -15,6 +15,11 @@ def main(argv):
     for file in lst_sources:
         if '.xlsx' in file:
             read_excel_book(file)
+
+        
+    roe_trimestral.rename(columns={0: 'Anio', 1: 'Quarter', 2:'BN',3: 'Patrimonio', 4:'ROE'},inplace=True)        
+    print(roe_trimestral)
+            
 
 def read_json():
     with open("conf/balance.json", "r") as read_file:
@@ -31,7 +36,7 @@ def read_excel_book(archivo):
     xl = pd.ExcelFile(archivo)
     df = xl.parse('Balance')
     df_data = pd.DataFrame(df)
-    print(trimestre_str)
+   
     linea_balance = locations[trimestre_str]
     data_b = df_data.iloc[[int(linea_balance)],[2]]   
 
@@ -43,10 +48,7 @@ def read_excel_book(archivo):
     patrimonio = data_b.iloc[0].values 
     roe = bn / patrimonio 
     fila = [(anio,quarter,bn,patrimonio, roe)]
-
-    print(fila)
-    #roe_trimestral = roe_trimestral.append(fila,ignore_index=True)
-    #print(roe_trimestral)
+    roe_trimestral = roe_trimestral.append(fila,ignore_index=True)
         
 
 if __name__ == "__main__":
